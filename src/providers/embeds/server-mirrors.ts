@@ -16,6 +16,7 @@ export const serverMirrorEmbed = makeEmbed({
             headers: context.headers,
             flags: context.flags,
             captions: context.captions,
+            skipValidation: context.skipvalid,
           },
         ],
       };
@@ -29,6 +30,7 @@ export const serverMirrorEmbed = makeEmbed({
           flags: context.flags,
           captions: context.captions,
           headers: context.headers,
+          skipValidation: context.skipvalid,
         },
       ],
     };

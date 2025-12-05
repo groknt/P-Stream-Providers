@@ -50,6 +50,7 @@ export async function validatePlayableStream(
   sourcererId: string,
 ): Promise<Stream | null> {
   if (SKIP_VALIDATION_CHECK_IDS.includes(sourcererId)) return stream;
+  if (stream.skipValidation) return stream;
 
   const alwaysUseNormalFetch = UNPROXIED_VALIDATION_CHECK_IDS.includes(sourcererId);
 
