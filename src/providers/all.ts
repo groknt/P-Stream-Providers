@@ -81,6 +81,7 @@ import { coitusScraper } from './sources/coitus';
 import { cuevana3Scraper } from './sources/cuevana3';
 import { debridScraper } from './sources/debrid';
 import { embedsuScraper } from './sources/embedsu';
+import { fullhdfilmizleScraper } from './sources/fullhdfilmizle';
 import { hdRezkaScraper } from './sources/hdrezka';
 import { iosmirrorScraper } from './sources/iosmirror';
 import { iosmirrorPVScraper } from './sources/iosmirrorpv';
@@ -149,6 +150,7 @@ export function gatherAllSources(): Array<Sourcerer> {
     movies4fScraper,
     debridScraper,
     cinehdplusScraper,
+    fullhdfilmizleScraper,
   ];
 }
 
