@@ -65,6 +65,7 @@ export const droploadScraper = makeEmbed({
   id: 'dropload',
   name: 'Dropload',
   rank: 120,
+  flags: [flags.CORS_ALLOWED],
   scrape: async (ctx) => {
     const headers = {
       referer: ctx.url,

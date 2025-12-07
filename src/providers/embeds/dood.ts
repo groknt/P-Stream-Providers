@@ -47,6 +47,7 @@ export const doodScraper = makeEmbed({
   name: 'dood',
   disabled: false,
   rank: 173,
+  flags: [],
   async scrape(ctx) {
     // Resolve any interstitial/redirect links (e.g., primewire wrappers)
     let pageUrl = ctx.url;

@@ -20,9 +20,9 @@ function embed(provider: { id: string; name: string; rank: number; disabled?: bo
   return makeEmbed({
     id: provider.id,
     name: provider.name,
-    // disabled: provider.disabled,
     disabled: true,
     rank: provider.rank,
+    flags: [flags.CORS_ALLOWED],
     async scrape(ctx) {
       const [url, quality] = ctx.url.split('|');
       return {

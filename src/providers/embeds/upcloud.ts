@@ -61,6 +61,7 @@ export const upcloudScraper = makeEmbed({
   name: 'UpCloud',
   rank: 200,
   disabled: true,
+  flags: [flags.CORS_ALLOWED],
   async scrape(ctx) {
     // Example url: https://dokicloud.one/embed-4/{id}?z=
     const parsedUrl = new URL(ctx.url.replace('embed-5', 'embed-4'));

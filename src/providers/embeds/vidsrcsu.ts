@@ -9,6 +9,7 @@ const providers = [
   {
     id: 'server-18',
     rank: 111,
+    flags: [],
   },
   {
     id: 'server-11',
@@ -97,6 +98,7 @@ function embed(provider: { id: string; rank: number; name?: string; disabled?: b
     // disabled: provider.disabled,
     disabled: true,
     rank: provider.rank,
+    flags: [flags.CORS_ALLOWED],
     async scrape(ctx) {
       return {
         stream: [

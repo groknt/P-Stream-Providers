@@ -1,9 +1,11 @@
+import { flags } from '@/index';
 import { makeEmbed } from '@/providers/base';
 
 export const serverMirrorEmbed = makeEmbed({
   id: 'mirror',
   name: 'Mirror',
   rank: 1,
+  flags: [flags.CORS_ALLOWED],
   async scrape(ctx) {
     const context = JSON.parse(ctx.url);
     if (context.type === 'hls') {

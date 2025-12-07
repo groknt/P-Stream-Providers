@@ -14,6 +14,7 @@ export const ridooScraper = makeEmbed({
   id: 'ridoo',
   name: 'Ridoo',
   rank: 121,
+  flags: [flags.CORS_ALLOWED],
   async scrape(ctx) {
     const res = await ctx.proxiedFetcher<string>(ctx.url, {
       headers: {

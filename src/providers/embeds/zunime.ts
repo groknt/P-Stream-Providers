@@ -1,3 +1,4 @@
+import { flags } from '@/index';
 import { NotFoundError } from '@/utils/errors';
 
 import { EmbedOutput, makeEmbed } from '../base';
@@ -17,6 +18,7 @@ export function makeZunimeEmbed(id: string, rank: number = 100) {
     id: `zunime-${id}`,
     name: `${id.charAt(0).toUpperCase() + id.slice(1)}`,
     rank,
+    flags: [flags.CORS_ALLOWED],
     async scrape(ctx): Promise<EmbedOutput> {
       const serverName = id as (typeof ZUNIME_SERVERS)[number];
 

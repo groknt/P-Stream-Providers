@@ -62,6 +62,6 @@ export function getProviders(features: FeatureMap, list: ProviderList): Provider
 
   return {
     sources: sources.filter((s) => flagsAllowedInFeatures(features, s.flags)),
-    embeds,
+    embeds: embeds.filter((e) => flagsAllowedInFeatures(features, e.flags)),
   };
 }

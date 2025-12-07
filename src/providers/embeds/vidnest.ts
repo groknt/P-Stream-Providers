@@ -8,12 +8,13 @@ export const vidnestHollymoviehdEmbed = makeEmbed({
   id: 'vidnest-hollymoviehd',
   name: 'HollyMovie',
   rank: 104,
+  flags: [flags.CORS_ALLOWED],
   disabled: true,
   async scrape(ctx) {
     const serverStreams = await ctx.proxiedFetcher<any>(ctx.url);
     if (!serverStreams.success || !serverStreams.sources) throw new NotFoundError('No streams found');
 
-    const streams = [];
+    const streams: HlsBasedStream[] = [];
     for (const source of serverStreams.sources) {
       if (source.file.includes('pkaystream.cc/pl/')) {
         streams.push({
@@ -37,6 +38,7 @@ export const vidnestAllmoviesEmbed = makeEmbed({
   id: 'vidnest-allmovies',
   name: 'AllMovies (Hindi)',
   rank: 103,
+  flags: [flags.CORS_ALLOWED],
   disabled: true,
   async scrape(ctx) {
     const serverStreams = await ctx.proxiedFetcher<any>(ctx.url);
@@ -65,6 +67,7 @@ export const vidnestFlixhqEmbed = makeEmbed({
   name: 'FlixHQ',
   rank: 102,
   disabled: true,
+  flags: [flags.CORS_ALLOWED],
   async scrape() {
     throw new Error('Not implemented');
   },
@@ -75,6 +78,7 @@ export const vidnestOfficialEmbed = makeEmbed({
   name: 'Official',
   rank: 101,
   disabled: true,
+  flags: [flags.CORS_ALLOWED],
   async scrape() {
     throw new Error('Not implemented');
   },

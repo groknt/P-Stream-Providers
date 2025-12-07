@@ -18,6 +18,7 @@ export const turbovidScraper = makeEmbed({
   id: 'turbovid',
   name: 'Turbovid',
   rank: 122,
+  flags: [flags.CORS_ALLOWED],
   async scrape(ctx) {
     const baseUrl = new URL(ctx.url).origin;
     const embedPage = await ctx.proxiedFetcher(ctx.url);

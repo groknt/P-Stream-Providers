@@ -10,5 +10,6 @@ Support is not provided for any forks or mirrors of P-Stream.
 ## Reporting a Vulnerability
 
 There are two ways you can contact the p-stream maintainers to report a vulnerability:
- - Report the vulnerability in the [p-stream Discord server](https://docs.pstream.mov/links/discord)
- - ~~Email [security@p-stream.app](mailto:security@p-stream.app)~~
+
+- Report the vulnerability in the [p-stream Discord server](https://docs.pstream.mov/links/discord)
+- ~~Email [security@p-stream.app](mailto:security@p-stream.app)~~

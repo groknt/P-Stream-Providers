@@ -30,6 +30,7 @@ function makeVidSrcEmbed(provider: { id: string; name: string; rank: number }) {
     id: provider.id,
     name: provider.name,
     rank: provider.rank,
+    flags: [flags.CORS_ALLOWED],
     async scrape(ctx) {
       if (ctx.url.includes('https://cdn.niggaflix.xyz')) {
         return {

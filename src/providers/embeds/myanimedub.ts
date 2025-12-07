@@ -8,6 +8,7 @@ export const myanimedubScraper = makeEmbed({
   id: 'myanimedub',
   name: 'MyAnime (Dub)',
   rank: 205,
+  flags: [flags.CORS_ALLOWED],
   async scrape(ctx) {
     const streamData = await ctx.proxiedFetcher<any>(
       `https://anime.aether.mom/api/stream?id=${ctx.url}&server=HD-2&type=dub`,

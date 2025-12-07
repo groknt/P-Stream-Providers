@@ -134,6 +134,7 @@ function embed(provider: { id: string; name: string; rank: number; disabled?: bo
     id: provider.id,
     name: provider.name,
     rank: provider.rank,
+    flags: [flags.CORS_ALLOWED],
     disabled: provider.disabled,
     async scrape(ctx) {
       const headers = {

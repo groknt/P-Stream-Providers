@@ -40,6 +40,7 @@ export const supervideoScraper = makeEmbed({
   id: 'supervideo',
   name: 'SuperVideo',
   rank: 130,
+  flags: [flags.CORS_ALLOWED],
   scrape: async (ctx) => {
     let url = ctx.url;
 

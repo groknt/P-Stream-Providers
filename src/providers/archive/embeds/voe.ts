@@ -8,6 +8,7 @@ export const voeScraper = makeEmbed({
   id: 'voe',
   name: 'voe.sx',
   rank: 180,
+  flags: [flags.CORS_ALLOWED, flags.IP_LOCKED],
   async scrape(ctx) {
     const embedRes = await ctx.proxiedFetcher.full<string>(ctx.url);
     const embed = embedRes.body;

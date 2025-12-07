@@ -19,6 +19,7 @@ function embed(provider: { id: string; name: string; rank: number }) {
     id: provider.id,
     name: provider.name,
     rank: provider.rank,
+    flags: [flags.CORS_ALLOWED, flags.IP_LOCKED],
     async scrape(ctx) {
       const embedHtml = await ctx.proxiedFetcher<string>(ctx.url);
 

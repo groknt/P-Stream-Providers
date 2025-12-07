@@ -17,6 +17,7 @@ export const madplayBaseEmbed = makeEmbed({
   id: 'madplay-base',
   name: 'Base',
   rank: 134,
+  flags: [flags.CORS_ALLOWED],
   async scrape(ctx): Promise<EmbedOutput> {
     const query = JSON.parse(ctx.url);
     const { type, tmdbId, season, episode } = query;
@@ -62,6 +63,7 @@ export const madplayNsapiEmbed = makeEmbed({
   id: 'madplay-nsapi',
   name: 'Northstar',
   rank: 133,
+  flags: [flags.CORS_ALLOWED],
   async scrape(ctx): Promise<EmbedOutput> {
     const query = JSON.parse(ctx.url);
     const { type, tmdbId, season, episode } = query;
@@ -107,6 +109,7 @@ export const madplayRoperEmbed = makeEmbed({
   id: 'madplay-roper',
   name: 'Roper',
   rank: 132,
+  flags: [flags.CORS_ALLOWED],
   async scrape(ctx): Promise<EmbedOutput> {
     const query = JSON.parse(ctx.url);
     const { type, tmdbId, season, episode } = query;
@@ -152,6 +155,7 @@ export const madplayNsapiVidFastEmbed = makeEmbed({
   id: 'madplay-vidfast',
   name: 'Vidfast',
   rank: 131,
+  flags: [flags.CORS_ALLOWED],
   async scrape(ctx): Promise<EmbedOutput> {
     const query = JSON.parse(ctx.url);
     const { type, tmdbId, season, episode } = query;

@@ -47,6 +47,7 @@ export const streambucketScraper = makeEmbed({
   rank: 196,
   // TODO - Disabled until ctx.fetcher and ctx.proxiedFetcher don't trigger bot detection
   disabled: true,
+  flags: [],
   async scrape(ctx) {
     // Using the context fetchers make the site return just the string "No bots please!"?
     // TODO - Fix this. Native fetch does not trigger this. No idea why right now

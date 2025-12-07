@@ -59,6 +59,7 @@ export function makeVidifyEmbed(id: string, rank: number = 100) {
     name: `${id.charAt(0).toUpperCase() + id.slice(1)}`,
     rank,
     disabled: true,
+    flags: [],
     async scrape(ctx): Promise<EmbedOutput> {
       const query = JSON.parse(ctx.url);
       const { type, tmdbId, season, episode } = query;

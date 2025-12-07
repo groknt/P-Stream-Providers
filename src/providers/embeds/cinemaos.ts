@@ -10,6 +10,7 @@ export function makeCinemaOSEmbed(server: string, rank: number) {
     id: `cinemaos-${server}`,
     name: `${server.charAt(0).toUpperCase() + server.slice(1)}`,
     rank,
+    flags: [flags.CORS_ALLOWED],
     disabled: true,
     async scrape(ctx): Promise<EmbedOutput> {
       const query = JSON.parse(ctx.url);
@@ -105,6 +106,7 @@ export function makeCinemaOSHexaEmbed(id: string, rank: number = 100) {
     name: `Hexa ${id.charAt(0).toUpperCase() + id.slice(1)}`,
     disabled: true,
     rank,
+    flags: [flags.CORS_ALLOWED],
     async scrape(ctx): Promise<EmbedOutput> {
       const query = JSON.parse(ctx.url);
       const directUrl = query.directUrl;

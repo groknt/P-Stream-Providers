@@ -12,7 +12,7 @@ class Unbaser {
 
   private base: number;
 
-  public unbase: (value: string) => number;
+  public unbase!: (value: string) => number;
 
   constructor(base: number) {
     this.base = base;
@@ -148,6 +148,7 @@ function makeVidhideScraper(provider: { id: string; name: string; rank: number }
     id: provider.id,
     name: provider.name,
     rank: provider.rank,
+    flags: [flags.IP_LOCKED],
     async scrape(ctx) {
       const headers = {
         Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',

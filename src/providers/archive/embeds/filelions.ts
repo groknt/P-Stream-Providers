@@ -9,6 +9,7 @@ export const filelionsScraper = makeEmbed({
   id: 'filelions',
   name: 'filelions',
   rank: 115,
+  flags: [],
   async scrape(ctx) {
     const mainPageRes = await ctx.proxiedFetcher.full<string>(ctx.url, {
       headers: {

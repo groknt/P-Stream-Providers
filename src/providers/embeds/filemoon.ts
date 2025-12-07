@@ -1,6 +1,7 @@
 import { load } from 'cheerio';
 import { unpack } from 'unpacker';
 
+import { flags } from '@/index';
 import { makeEmbed } from '@/providers/base';
 import { NotFoundError } from '@/utils/errors';
 
@@ -11,6 +12,7 @@ export const filemoonScraper = makeEmbed({
   id: 'filemoon',
   name: 'Filemoon',
   rank: 405,
+  flags: [flags.CORS_ALLOWED],
   async scrape(ctx) {
     const headers = {
       Accept:
