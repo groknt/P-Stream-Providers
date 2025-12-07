@@ -1,4 +1,4 @@
-import { flags } from '@/index';
+import { flags } from '@/entrypoint/utils/targets';
 import { makeEmbed } from '@/providers/base';
 
 export const serverMirrorEmbed = makeEmbed({
