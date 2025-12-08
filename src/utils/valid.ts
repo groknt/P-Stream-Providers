@@ -41,7 +41,28 @@ export function isValidStream(stream: Stream | undefined): boolean {
  * instead of proxiedFetcher
  */
 function isAlreadyProxyUrl(url: string): boolean {
-  return url.includes('/m3u8-proxy?url=');
+  return url.includes('/m3u8-proxy?url=') || url.includes('shegu.net');
+}
+
+/**
+ * Check if a response result indicates an invalid/error response that should fail validation
+ */
+function isErrorResponse(result: { statusCode: number; body: string | any; finalUrl?: string }): boolean {
+  if (result.statusCode === 403) return true;
+
+  const bodyStr = typeof result.body === 'string' ? result.body : String(result.body);
+  if (result.statusCode === 200 && bodyStr.trim() === 'error_wrong_ip') return true;
+
+  if (result.statusCode === 200) {
+    try {
+      const parsed = JSON.parse(bodyStr);
+      if (parsed.status === 403 && parsed.msg === 'Access Denied') return true;
+    } catch {
+      // Not JSON, continue
+    }
+  }
+
+  return false;
 }
 
 export async function validatePlayableStream(
@@ -88,7 +109,7 @@ export async function validatePlayableStream(
       });
     }
 
-    if (result.statusCode < 200 || result.statusCode >= 400) return null;
+    if (result.statusCode < 200 || result.statusCode >= 400 || isErrorResponse(result)) return null;
     return stream;
   }
 
@@ -130,7 +151,11 @@ export async function validatePlayableStream(
     // remove invalid qualities from the stream
     const validQualities = stream.qualities;
     Object.keys(stream.qualities).forEach((quality, index) => {
-      if (validQualitiesResults[index].statusCode < 200 || validQualitiesResults[index].statusCode >= 400) {
+      if (
+        validQualitiesResults[index].statusCode < 200 ||
+        validQualitiesResults[index].statusCode >= 400 ||
+        isErrorResponse(validQualitiesResults[index])
+      ) {
         delete validQualities[quality as keyof typeof stream.qualities];
       }
     });
