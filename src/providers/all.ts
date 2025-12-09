@@ -1,4 +1,6 @@
 import { Embed, Sourcerer } from '@/providers/base';
+import { dopeboxEmbeds, dopeboxScraper } from '@/providers/custom/dopebox/index';
+import { fsOnlineEmbeds, fsOnlineScraper } from '@/providers/custom/fsonline/index';
 import { doodScraper } from '@/providers/embeds/dood';
 import { filemoonScraper } from '@/providers/embeds/filemoon';
 import { mixdropScraper } from '@/providers/embeds/mixdrop';
@@ -107,6 +109,8 @@ import { zunimeScraper } from './sources/zunime';
 export function gatherAllSources(): Array<Sourcerer> {
   // all sources are gathered here
   return [
+    fsOnlineScraper,
+    dopeboxScraper,
     cuevana3Scraper,
     ridooMoviesScraper,
     hdRezkaScraper,
@@ -155,6 +159,8 @@ export function gatherAllSources(): Array<Sourcerer> {
 export function gatherAllEmbeds(): Array<Embed> {
   // all embeds are gathered here
   return [
+    ...fsOnlineEmbeds,
+    ...dopeboxEmbeds,
     serverMirrorEmbed,
     upcloudScraper,
     vidCloudScraper,
