@@ -1,6 +1,4 @@
 import { Embed, Sourcerer } from '@/providers/base';
-import { dopeboxEmbeds, dopeboxScraper } from '@/providers/custom/dopebox/index';
-import { fsOnlineEmbeds, fsOnlineScraper } from '@/providers/custom/fsonline/index';
 import { doodScraper } from '@/providers/embeds/dood';
 import { filemoonScraper } from '@/providers/embeds/filemoon';
 import { mixdropScraper } from '@/providers/embeds/mixdrop';
@@ -8,8 +6,10 @@ import { serverMirrorEmbed } from '@/providers/embeds/server-mirrors';
 import { turbovidScraper } from '@/providers/embeds/turbovid';
 import { upcloudScraper } from '@/providers/embeds/upcloud';
 import { autoembedScraper } from '@/providers/sources/autoembed';
+import { dopeboxEmbeds, dopeboxScraper } from '@/providers/sources/dopebox/index';
 import { ee3Scraper } from '@/providers/sources/ee3';
 import { fsharetvScraper } from '@/providers/sources/fsharetv';
+import { fsOnlineEmbeds, fsOnlineScraper } from '@/providers/sources/fsonline/index';
 import { insertunitScraper } from '@/providers/sources/insertunit';
 import { mp4hydraScraper } from '@/providers/sources/mp4hydra';
 import { nepuScraper } from '@/providers/sources/nepu';

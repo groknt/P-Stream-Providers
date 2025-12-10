@@ -6,13 +6,12 @@ import { SourcererEmbed, SourcererOutput, makeEmbed, makeSourcerer } from '@/pro
 import { MovieScrapeContext, ScrapeContext, ShowScrapeContext } from '@/utils/context';
 
 import { scrapeDoodstreamEmbed } from './doodstream';
-import { scrapeFilemoonEmbed } from './filemoon';
-import { EMBED_URL, ORIGIN_HOST, getMoviePageURL, throwOnResponse } from './utils';
+import { EMBED_URL, ORIGIN_HOST, fetchENTMDBName, getMoviePageURL, throwOnResponse } from './utils';
 
 export const LOG_PREFIX = '[FSOnline]';
 
 async function getMovieID(ctx: ScrapeContext, url: string): Promise<string | undefined> {
-  console.log(LOG_PREFIX, 'Scraping movie ID from', url);
+  // console.log(LOG_PREFIX, 'Scraping movie ID from', url);
 
   let $: CheerioAPI;
   try {
@@ -34,13 +33,13 @@ async function getMovieID(ctx: ScrapeContext, url: string): Promise<string | und
     console.error(LOG_PREFIX, 'Could not find movie ID', url);
     return undefined;
   }
-  console.log(LOG_PREFIX, 'Movie ID', movieID);
+  // console.log(LOG_PREFIX, 'Movie ID', movieID);
 
   return movieID;
 }
 
 async function getMovieSources(ctx: ScrapeContext, id: string, refererHeader: string): Promise<Map<string, string>> {
-  console.log(LOG_PREFIX, 'Scraping movie sources for', id);
+  // console.log(LOG_PREFIX, 'Scraping movie sources for', id);
   const sources: Map<string, string> = new Map<string, string>();
 
   let $: CheerioAPI;
@@ -69,7 +68,7 @@ async function getMovieSources(ctx: ScrapeContext, id: string, refererHeader: st
       console.warn(LOG_PREFIX, 'Skipping invalid source', name);
       return;
     }
-    console.log(LOG_PREFIX, 'Found movie source for', id, name, url);
+    // console.log(LOG_PREFIX, 'Found movie source for', id, name, url);
     sources.set(name, url);
   });
 
@@ -88,13 +87,13 @@ function addEmbedFromSources(name: string, sources: Map<string, string>, embeds:
 }
 
 async function comboScraper(ctx: ShowScrapeContext | MovieScrapeContext): Promise<SourcererOutput> {
-  // always use the english title
+  const movieName = await fetchENTMDBName(Number(ctx.media.tmdbId), ctx.media.type);
   const moviePageURL = getMoviePageURL(
-    ctx.media.type === 'movie' ? `${ctx.media.title} ${ctx.media.releaseYear}` : ctx.media.title,
+    ctx.media.type === 'movie' ? `${movieName} ${ctx.media.releaseYear}` : movieName,
     ctx.media.type === 'show' ? ctx.media.season.number : undefined,
     ctx.media.type === 'show' ? ctx.media.episode.number : undefined,
   );
-  console.log(LOG_PREFIX, 'Movie page URL', moviePageURL);
+  // console.log(LOG_PREFIX, 'Movie page URL', moviePageURL);
 
   const movieID = await getMovieID(ctx, moviePageURL);
   if (!movieID) {
@@ -121,7 +120,7 @@ async function comboScraper(ctx: ShowScrapeContext | MovieScrapeContext): Promis
 export const fsOnlineScraper = makeSourcerer({
   id: 'fsonline',
   name: 'FSOnline',
-  rank: 500,
+  rank: 200,
   flags: ['cors-allowed'],
   scrapeMovie: comboScraper,
   scrapeShow: comboScraper,
@@ -131,15 +130,15 @@ export const fsOnlineEmbeds = [
   makeEmbed({
     id: 'fsonline-doodstream',
     name: 'Doodstream',
-    rank: 5001,
+    rank: 2001,
     scrape: scrapeDoodstreamEmbed,
     flags: ['cors-allowed'],
   }),
-  makeEmbed({
-    id: 'fsonline-filemoon',
-    name: 'Filemoon',
-    rank: 5002,
-    scrape: scrapeFilemoonEmbed,
-    flags: ['cors-allowed'],
-  }),
+  // makeEmbed({
+  //   id: 'fsonline-filemoon',
+  //   name: 'Filemoon',
+  //   rank: 2002,
+  //   scrape: scrapeFilemoonEmbed,
+  //   flags: ['cors-allowed'],
+  // }),
 ];

@@ -43,7 +43,7 @@ function extractStreamInfo($: CheerioAPI): [string | undefined, string | undefin
 }
 
 async function getStream(ctx: ScrapeContext, url: string): Promise<[string, string] | undefined> {
-  console.log(LOG_PREFIX, 'Fetching iframe');
+  // console.log(LOG_PREFIX, 'Fetching iframe');
 
   let $: CheerioAPI;
   let streamHost: string;
@@ -66,7 +66,7 @@ async function getStream(ctx: ScrapeContext, url: string): Promise<[string, stri
     console.error(LOG_PREFIX, "Couldn't find stream info", streamReq, tokenParams);
     return undefined;
   }
-  console.log(LOG_PREFIX, 'Stream info', streamReq, tokenParams);
+  // console.log(LOG_PREFIX, 'Stream info', streamReq, tokenParams);
 
   let streamURL: string;
   try {
@@ -83,13 +83,13 @@ async function getStream(ctx: ScrapeContext, url: string): Promise<[string, stri
     console.error(LOG_PREFIX, 'Failed to request stream URL', error);
     return undefined;
   }
-  console.log(LOG_PREFIX, 'Stream URL', streamURL);
+  // console.log(LOG_PREFIX, 'Stream URL', streamURL);
 
   return [streamURL, streamHost];
 }
 
 export async function scrapeDoodstreamEmbed(ctx: EmbedScrapeContext): Promise<EmbedOutput> {
-  console.log(LOG_PREFIX, 'Scraping stream URL', ctx.url);
+  // console.log(LOG_PREFIX, 'Scraping stream URL', ctx.url);
   let streamURL: string | undefined;
   let streamHost: string | undefined;
   try {

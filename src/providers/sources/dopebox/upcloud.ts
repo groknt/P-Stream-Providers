@@ -123,19 +123,19 @@ export async function scrapeUpCloudEmbed(ctx: EmbedScrapeContext): Promise<Embed
   if (!embedURL) {
     throw new Error('Failed to get embed URL (invalid movie?)');
   }
-  console.log('Embed URL', embedURL.href);
+  // console.log('Embed URL', embedURL.href);
 
   const embedID = embedURL.pathname.split('/').pop();
   if (!embedID) {
     throw new Error('Failed to get embed ID');
   }
-  console.log('Embed ID', embedID);
+  // console.log('Embed ID', embedID);
 
   const clientKey = await getClientKey(ctx, embedURL.href);
   if (!clientKey) {
     throw new Error('Failed to get client key');
   }
-  console.log('Client key', clientKey);
+  // console.log('Client key', clientKey);
 
   const response = await ctx.proxiedFetcher.full(`${FETCH_SOURCES_URL}?id=${embedID}&_k=${clientKey}`, {
     headers: {
