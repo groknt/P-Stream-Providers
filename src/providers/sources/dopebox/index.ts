@@ -2,6 +2,7 @@ import Fuse from 'fuse.js';
 
 import { SourcererEmbed, SourcererOutput, makeEmbed, makeSourcerer } from '@/providers/base';
 import { MovieScrapeContext, ShowScrapeContext } from '@/utils/context';
+import { fetchTMDBName } from '@/utils/tmdb';
 
 import { Media, MediaPlayer, getEpisodePlayers, getEpisodes, getMoviePlayers, getSeasons, searchMedia } from './search';
 import { scrapeUpCloudEmbed } from './upcloud';
@@ -13,12 +14,13 @@ async function handleContext(ctx: ShowScrapeContext | MovieScrapeContext) {
   }
 
   const mediaType = ctx.media.type === 'show' ? 'TV' : 'Movie';
-  const results = (await searchMedia(ctx, getSearchQuery(ctx.media.title))).filter((r) => r.info.includes(mediaType));
+  const mediaTitle = await fetchTMDBName(ctx);
+  const results = (await searchMedia(ctx, getSearchQuery(mediaTitle))).filter((r) => r.info.includes(mediaType));
   const fuse = new Fuse<Media>(results, {
     keys: ['title'],
   });
 
-  const media = fuse.search(ctx.media.title).find((r) => r.item.info.includes(ctx.media.releaseYear.toString()))?.item;
+  const media = fuse.search(mediaTitle).find((r) => r.item.info.includes(ctx.media.releaseYear.toString()))?.item;
   if (!media) {
     throw new Error('Could not find movie');
   }

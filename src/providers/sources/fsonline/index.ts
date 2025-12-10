@@ -4,9 +4,10 @@ import type { CheerioAPI } from 'cheerio';
 import { FetcherResponse } from '@/fetchers/types';
 import { SourcererEmbed, SourcererOutput, makeEmbed, makeSourcerer } from '@/providers/base';
 import { MovieScrapeContext, ScrapeContext, ShowScrapeContext } from '@/utils/context';
+import { fetchTMDBName } from '@/utils/tmdb';
 
 import { scrapeDoodstreamEmbed } from './doodstream';
-import { EMBED_URL, ORIGIN_HOST, fetchENTMDBName, getMoviePageURL, throwOnResponse } from './utils';
+import { EMBED_URL, ORIGIN_HOST, getMoviePageURL, throwOnResponse } from './utils';
 
 export const LOG_PREFIX = '[FSOnline]';
 
@@ -87,7 +88,7 @@ function addEmbedFromSources(name: string, sources: Map<string, string>, embeds:
 }
 
 async function comboScraper(ctx: ShowScrapeContext | MovieScrapeContext): Promise<SourcererOutput> {
-  const movieName = await fetchENTMDBName(Number(ctx.media.tmdbId), ctx.media.type);
+  const movieName = await fetchTMDBName(ctx);
   const moviePageURL = getMoviePageURL(
     ctx.media.type === 'movie' ? `${movieName} ${ctx.media.releaseYear}` : movieName,
     ctx.media.type === 'show' ? ctx.media.season.number : undefined,
