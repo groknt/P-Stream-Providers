@@ -4,7 +4,7 @@ import { Stream } from '@/providers/streams';
 // Default proxy URL for general purpose proxying
 const DEFAULT_PROXY_URL = 'https://proxy.nsbx.ru/proxy';
 // Default M3U8 proxy URL for HLS stream proxying
-let CONFIGURED_M3U8_PROXY_URL = 'https://proxy2.pstream.mov';
+let CONFIGURED_M3U8_PROXY_URL = 'https://proxy.pstream.mov';
 
 /**
  * Set a custom M3U8 proxy URL to use for all M3U8 proxy requests

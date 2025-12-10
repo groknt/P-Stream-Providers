@@ -20,7 +20,7 @@ export function makeSimpleProxyFetcher(proxyUrl: string, f: FetchLike): Fetcher 
     const fetcher = makeStandardFetcher(async (a, b) => {
       // AbortController
       const controller = new AbortController();
-      const timeout = 15000; // 15s timeout
+      const timeout = 20000; // 20s timeout
       const timeoutId = setTimeout(() => controller.abort(), timeout);
 
       try {

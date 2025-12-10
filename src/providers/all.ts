@@ -12,10 +12,8 @@ import { fsharetvScraper } from '@/providers/sources/fsharetv';
 import { fsOnlineEmbeds, fsOnlineScraper } from '@/providers/sources/fsonline/index';
 import { insertunitScraper } from '@/providers/sources/insertunit';
 import { mp4hydraScraper } from '@/providers/sources/mp4hydra';
-import { nepuScraper } from '@/providers/sources/nepu';
 import { pirxcyScraper } from '@/providers/sources/pirxcy';
 import { tugaflixScraper } from '@/providers/sources/tugaflix';
-import { vidsrcScraper } from '@/providers/sources/vidsrc';
 import { vidsrcvipScraper } from '@/providers/sources/vidsrcvip';
 import { zoechipScraper } from '@/providers/sources/zoechip';
 
@@ -78,15 +76,12 @@ import { EightStreamScraper } from './sources/8stream';
 import { animeflvScraper } from './sources/animeflv';
 import { animetsuScraper } from './sources/animetsu';
 import { cinehdplusScraper } from './sources/cinehdplus-es';
-import { cinemaosScraper } from './sources/cinemaos';
 import { coitusScraper } from './sources/coitus';
 import { cuevana3Scraper } from './sources/cuevana3';
 import { debridScraper } from './sources/debrid';
 import { embedsuScraper } from './sources/embedsu';
 import { fullhdfilmizleScraper } from './sources/fullhdfilmizle';
 import { hdRezkaScraper } from './sources/hdrezka';
-import { iosmirrorScraper } from './sources/iosmirror';
-import { iosmirrorPVScraper } from './sources/iosmirrorpv';
 import { lookmovieScraper } from './sources/lookmovie';
 import { madplayScraper } from './sources/madplay';
 import { movies4fScraper } from './sources/movies4f';
@@ -123,13 +118,10 @@ export function gatherAllSources(): Array<Sourcerer> {
     tugaflixScraper,
     ee3Scraper,
     fsharetvScraper,
-    vidsrcScraper,
     zoechipScraper,
     mp4hydraScraper,
     embedsuScraper,
     slidemoviesScraper,
-    iosmirrorScraper,
-    iosmirrorPVScraper,
     vidapiClickScraper,
     coitusScraper,
     streamboxScraper,
@@ -137,8 +129,6 @@ export function gatherAllSources(): Array<Sourcerer> {
     EightStreamScraper,
     wecimaScraper,
     animeflvScraper,
-    cinemaosScraper,
-    nepuScraper,
     pirxcyScraper,
     vidsrcvipScraper,
     madplayScraper,

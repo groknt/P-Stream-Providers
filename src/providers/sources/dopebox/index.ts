@@ -80,7 +80,7 @@ async function comboScraper(ctx: ShowScrapeContext | MovieScrapeContext): Promis
 export const dopeboxScraper = makeSourcerer({
   id: 'dopebox',
   name: 'Dopebox',
-  rank: 210,
+  rank: 197,
   flags: ['cors-allowed'],
   scrapeMovie: comboScraper,
   scrapeShow: comboScraper,

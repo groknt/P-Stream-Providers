@@ -50,6 +50,9 @@ export const filelionsScraper = makeEmbed({
           id: 'primary',
           type: 'hls',
           playlist: streamUrl,
+          headers: {
+            Referer: 'https://primesrc.me/',
+          },
           flags: [],
           captions: [],
         },

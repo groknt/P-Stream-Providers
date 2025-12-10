@@ -1,7 +1,6 @@
 import { load } from 'cheerio';
 import { unpack } from 'unpacker';
 
-import { flags } from '@/entrypoint/utils/targets';
 import { makeEmbed } from '@/providers/base';
 import { NotFoundError } from '@/utils/errors';
 
@@ -12,7 +11,7 @@ export const filemoonScraper = makeEmbed({
   id: 'filemoon',
   name: 'Filemoon',
   rank: 405,
-  flags: [flags.CORS_ALLOWED],
+  flags: [],
   async scrape(ctx) {
     const headers = {
       Accept:
@@ -68,13 +67,8 @@ export const filemoonScraper = makeEmbed({
       stream: [
         {
           id: 'primary',
-          type: 'file',
-          qualities: {
-            unknown: {
-              type: 'mp4',
-              url: videoUrl,
-            },
-          },
+          type: 'hls',
+          playlist: videoUrl,
           headers: {
             Referer: `${new URL(ctx.url).origin}/`,
             'User-Agent': userAgent,

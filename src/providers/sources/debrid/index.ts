@@ -4,10 +4,12 @@ import { SourcererOutput, makeSourcerer } from '@/providers/base';
 import { MovieScrapeContext, ShowScrapeContext } from '@/utils/context';
 import { NotFoundError } from '@/utils/errors';
 
-import { debridProviders, torrentioResponse } from './types';
+import { getCometStreams } from './comet';
+import { getAddonStreams, parseStreamData } from './helpers';
+import { DebridParsedStream, debridProviders } from './types';
 
 const OVERRIDE_TOKEN = '';
-const OVERRIDE_SERVICE = ''; // torbox or realdebrid (or real-debrid)
+const OVERRIDE_SERVICE: debridProviders | '' = ''; // torbox or realdebrid (or real-debrid)
 
 const getDebridToken = (): string | null => {
   try {
@@ -48,27 +50,6 @@ const getDebridService = (): debridProviders => {
   }
 };
 
-type DebridParsedStream = {
-  resolution?: string;
-  year?: number;
-  source?: string;
-  bitDepth?: string;
-  codec?: string;
-  audio?: string;
-  container?: string;
-  seasons?: number[];
-  season?: number;
-  episodes?: number[];
-  episode?: number;
-  complete?: boolean;
-  unrated?: boolean;
-  remastered?: boolean;
-  languages?: string[];
-  dubbed?: boolean;
-  title: string;
-  url: string;
-};
-
 function normalizeQuality(resolution?: string): '4k' | 1080 | 720 | 480 | 360 | 'unknown' {
   if (!resolution) return 'unknown';
   const res = resolution.toLowerCase();
@@ -104,51 +85,46 @@ async function comboScraper(ctx: ShowScrapeContext | MovieScrapeContext): Promis
 
   const debridProvider: debridProviders = getDebridService();
 
-  let torrentioUrl = `https://torrentio.strem.fun/${debridProvider}=${apiKey}/stream/`;
-
-  if (ctx.media.type === 'show') {
-    torrentioUrl += `series/${ctx.media.imdbId}:${ctx.media.season.number}:${ctx.media.episode.number}.json`;
-  } else {
-    torrentioUrl += `movie/${ctx.media.imdbId}.json`;
-  }
-  const torrentioData = (await ctx.proxiedFetcher(torrentioUrl)) as torrentioResponse;
-
-  const torrentioStreams = torrentioData?.streams || [];
-  if (torrentioStreams.length === 0) {
-    console.log('No torrents found', torrentioData);
-    throw new NotFoundError('No torrents found');
-  }
+  const [torrentioResult, cometStreams] = await Promise.all([
+    getAddonStreams(`https://torrentio.strem.fun/${debridProvider}=${apiKey}`, ctx),
+    getCometStreams(apiKey, debridProvider, ctx).catch(() => {
+      return [] as DebridParsedStream[];
+    }),
+  ]);
 
   ctx.progress(33);
 
-  const response: DebridParsedStream[] = await ctx.proxiedFetcher('https://torrent-parse.pstream.mov/', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(torrentioStreams),
-  });
-  if (response.length === 0) {
-    console.log('No streams found or parse failed!', response);
+  const torrentioStreams = await parseStreamData(
+    torrentioResult.streams.map((s) => ({
+      ...s,
+      title: s.title ?? '',
+    })),
+    ctx,
+  );
+
+  const allStreams = [...torrentioStreams, ...cometStreams];
+
+  if (allStreams.length === 0) {
+    console.log('No streams found from either source!');
     throw new NotFoundError('No streams found or parse failed!');
   }
 
+  console.log(
+    `Total streams: ${allStreams.length} (${torrentioStreams.length} from Torrentio, ${cometStreams.length} from Comet)`,
+  );
+
   ctx.progress(66);
 
-  // Group by quality, pick the most compatible stream for each
   const qualities: Partial<Record<'4k' | 1080 | 720 | 480 | 360 | 'unknown', { type: 'mp4'; url: string }>> = {};
 
-  // Group streams by normalized quality
   const byQuality: Record<string, DebridParsedStream[]> = {};
-  for (const stream of response) {
+  for (const stream of allStreams) {
     const quality = normalizeQuality(stream.resolution);
     if (!byQuality[quality]) byQuality[quality] = [];
     byQuality[quality].push(stream);
   }
 
-  // For each quality, pick the best compatible stream (prefer mp4+aac, fallback to mkv)
   for (const [quality, streams] of Object.entries(byQuality)) {
-    // Prefer mp4 + aac
     const mp4Aac = streams.find((s) => s.container === 'mp4' && s.audio === 'aac');
     if (mp4Aac) {
       qualities[quality as keyof typeof qualities] = {
@@ -157,7 +133,6 @@ async function comboScraper(ctx: ShowScrapeContext | MovieScrapeContext): Promis
       };
       continue;
     }
-    // Fallback: any mp4
     const mp4 = streams.find((s) => s.container === 'mp4');
     if (mp4) {
       qualities[quality as keyof typeof qualities] = {
@@ -166,6 +141,7 @@ async function comboScraper(ctx: ShowScrapeContext | MovieScrapeContext): Promis
       };
       continue;
     }
+
     streams.sort((a, b) => scoreStream(b) - scoreStream(a));
     const best = streams[0];
     if (best) {
