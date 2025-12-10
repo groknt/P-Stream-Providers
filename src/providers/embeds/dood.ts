@@ -1,34 +1,25 @@
+/* eslint-disable no-console */
 import { customAlphabet } from 'nanoid';
 
+import { flags } from '@/entrypoint/utils/targets';
 import { makeEmbed } from '@/providers/base';
 
 const nanoid = customAlphabet('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789', 10);
 
 const PASS_MD5_PATTERNS: RegExp[] = [
-  /\$\.get\('\/pass_md5[^']*'\)/,
-  /\$\.get\("\/pass_md5[^"]*"\)/,
-  /\$\.get\s*\('\/pass_md5([^']+)'\)/,
-  /\$\.get\s*\("\/pass_md5([^"]+)"\)/,
-  /fetch\(\s*["'](\/pass_md5[^"']+)["']\s*\)/,
-  /axios\.get\(\s*["'](\/pass_md5[^"']+)["']\s*\)/,
-  /open\(\s*["']GET["']\s*,\s*["'](\/pass_md5[^"']+)["']\s*\)/,
-  /url\s*:\s*["'](\/pass_md5[^"']+)["']/,
-  /location\.href\s*=\s*["'](\/pass_md5[^"']+)["']/,
-  /(\/pass_md5\.php[^"']*)/,
-  /["'](\/pass_md5\/[^"']+)["']/,
+  /\$\.get\(['"](\/pass_md5\/[^'"]+)['"]/,
+  /\$\.get\(["`](\/pass_md5\/[^"']+)["`]/,
+  /\$\.get\s*\(['"](\/pass_md5\/[^'"]+)['"]/,
+  /\$\.get\s*\(["`](\/pass_md5\/[^"']+)["`]/,
 ];
 
-const TOKEN_PATTERNS: RegExp[] = [/token["']?\s*[:=]\s*["']([^"']+)["']/, /makePlay\([^)]*token=([^"&']+)/];
+const TOKEN_PATTERNS: RegExp[] = [/token["']?\s*[:=]\s*["']([^"']+)["']/, /makePlay.*?token=([^"&']+)/];
 
 function extractFirst(html: string, patterns: RegExp[]): string | null {
   for (const pat of patterns) {
     const m = pat.exec(html);
-    if (m) {
-      // capture group if available else try to parse from full match
-      if (m.length > 1 && m[1]) return m[1];
-      const match = m[0];
-      const inner = /\/pass_md5[^'"')]+/.exec(match)?.[0] ?? null;
-      if (inner) return inner;
+    if (m && m[1]) {
+      return m[1];
     }
   }
   return null;
@@ -42,150 +33,105 @@ function resolveAbsoluteUrl(base: string, maybeRelative: string): string {
   }
 }
 
+async function extractVideoUrl(ctx: any, streamingLink: string): Promise<string | null> {
+  try {
+    const headers = {
+      'User-Agent':
+        'Mozilla/5.0 (iPhone; CPU iPhone OS 18_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.0 Mobile/15E148 Safari/604.1',
+      Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+      'Sec-Fetch-Site': 'none',
+      'Sec-Fetch-Mode': 'navigate',
+      'Accept-Language': 'en-US,en;q=0.9',
+      'Sec-Fetch-Dest': 'document',
+      Connection: 'keep-alive',
+    };
+
+    const response = await ctx.proxiedFetcher.full(streamingLink, {
+      headers,
+      allowRedirects: true,
+    });
+
+    const passMd5Match = extractFirst(response.body, PASS_MD5_PATTERNS);
+    if (!passMd5Match) {
+      return null;
+    }
+
+    const baseUrl = `${response.finalUrl.split('://')[0]}://${response.finalUrl.split('://')[1].split('/')[0]}`;
+    const passMd5Url = resolveAbsoluteUrl(baseUrl, passMd5Match);
+
+    const passMd5Response = await ctx.proxiedFetcher(passMd5Url, {
+      headers,
+      cookies: response.cookies,
+    });
+
+    const videoUrl = passMd5Response.trim();
+
+    const tokenMatch = extractFirst(response.body, TOKEN_PATTERNS);
+    if (tokenMatch) {
+      const randomString = nanoid();
+      const expiry = Date.now();
+      return `${videoUrl}${randomString}?token=${tokenMatch}&expiry=${expiry}`;
+    }
+
+    return videoUrl;
+  } catch (e) {
+    return null;
+  }
+}
+
 export const doodScraper = makeEmbed({
   id: 'dood',
   name: 'dood',
   disabled: false,
   rank: 173,
-  flags: [],
+  flags: [flags.CORS_ALLOWED],
   async scrape(ctx) {
-    // Resolve any interstitial/redirect links (e.g., primewire wrappers)
     let pageUrl = ctx.url;
-    if (pageUrl.includes('primewire')) {
-      const req = await ctx.proxiedFetcher.full(pageUrl);
-      pageUrl = req.finalUrl;
+
+    // Replace dood.watch with myvidplay.com to avoid Cloudflare protection
+    try {
+      const url = new URL(pageUrl);
+      if (url.hostname === 'dood.watch') {
+        pageUrl = `https://myvidplay.com${url.pathname}${url.search}`;
+      }
+    } catch {
+      // If URL parsing fails, keep original URL
     }
 
-    // Normalize to embed page /e/{id} when a /d/{id} download page is provided
-    const initial = new URL(pageUrl);
-    const idMatch = initial.pathname.match(/\/(?:d|e)\/([A-Za-z0-9]+)/);
-    const origin = (() => {
-      try {
-        return `${initial.protocol}//${initial.host}`;
-      } catch {
-        return 'https://d000d.com';
-      }
-    })();
-    const embedUrl = idMatch ? `${origin}/e/${idMatch[1]}` : pageUrl;
+    const redirectReq = await ctx.proxiedFetcher.full(pageUrl);
+    pageUrl = redirectReq.finalUrl;
 
-    // Fetch the dood embed page (consistent location of scripts)
-    const pageResp = await ctx.proxiedFetcher.full<string>(embedUrl);
-    const html = pageResp.body;
-    const finalPageUrl = pageResp.finalUrl || embedUrl;
-    const pageOrigin = (() => {
-      try {
-        const u = new URL(finalPageUrl);
-        return `${u.protocol}//${u.host}`;
-      } catch {
-        return origin;
-      }
-    })();
-
-    // Try to read thumbnail track (both quote styles)
-    const thumbnailTrack = html.match(/thumbnails:\s*\{\s*vtt:\s*['"]([^'"]+)['"]/);
-
-    // Find pass_md5 path in the main page, or fallback to iframes
-    let passPath = extractFirst(html, PASS_MD5_PATTERNS);
-
-    if (!passPath) {
-      const iframeSrcs = Array.from(html.matchAll(/<iframe[^>]+src=["']([^"']+)["']/gi))
-        .slice(0, 5)
-        .map((m) => m[1]);
-      for (const src of iframeSrcs) {
-        try {
-          const abs = resolveAbsoluteUrl(finalPageUrl, src);
-          const sub = await ctx.proxiedFetcher.full<string>(abs, {
-            headers: {
-              Referer: finalPageUrl,
-            },
-          });
-          passPath = extractFirst(sub.body, PASS_MD5_PATTERNS);
-          if (passPath) break;
-        } catch {
-          // ignore iframe failures
-        }
-      }
+    const videoUrl = await extractVideoUrl(ctx, pageUrl);
+    if (!videoUrl) {
+      throw new Error('dood: could not extract video URL');
     }
 
-    // Fallback: scan external scripts referenced by the page for pass_md5 usage
-    if (!passPath) {
-      const scriptSrcs = Array.from(html.matchAll(/<script[^>]+src=["']([^"']+)["']/gi))
-        .slice(0, 8)
-        .map((m) => m[1]);
-      for (const src of scriptSrcs) {
-        try {
-          const abs = resolveAbsoluteUrl(finalPageUrl, src);
-          const sub = await ctx.proxiedFetcher.full<string>(abs, {
-            headers: {
-              Referer: finalPageUrl,
-            },
-          });
-          passPath = extractFirst(sub.body, PASS_MD5_PATTERNS);
-          if (passPath) break;
-        } catch {
-          // ignore script failures
-        }
-      }
-    }
-
-    // Fallback: if a /d/{id} page exists, try scanning it as some variants only expose pass_md5 there
-    if (!passPath && idMatch) {
-      try {
-        const downloadUrl = `${pageOrigin}/d/${idMatch[1]}`;
-        const sub = await ctx.proxiedFetcher.full<string>(downloadUrl, {
-          headers: { Referer: finalPageUrl },
-        });
-        passPath = extractFirst(sub.body, PASS_MD5_PATTERNS);
-      } catch {
-        // ignore download page failure
-      }
-    }
-
-    if (!passPath) throw new Error('dood: pass_md5 path not found');
-
-    const passUrl = resolveAbsoluteUrl(pageOrigin, passPath.startsWith('/') ? passPath : `/${passPath}`);
-    const doodPage = await ctx.proxiedFetcher<string>(passUrl, {
+    // Extract thumbnail if available
+    const pageResp = await ctx.proxiedFetcher.full(pageUrl, {
       headers: {
-        Referer: finalPageUrl,
+        'User-Agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.9',
       },
-      method: 'GET',
     });
 
-    const token = extractFirst(html, TOKEN_PATTERNS);
-    const rawUrl = (doodPage ?? '')
-      .toString()
-      .trim()
-      .replace(/^['"]|['"]$/g, '');
-    const normalizedUrl = (() => {
-      if (!rawUrl) return '';
-      if (rawUrl.startsWith('//')) return `https:${rawUrl}`;
-      if (rawUrl.startsWith('/')) return resolveAbsoluteUrl(pageOrigin, rawUrl);
-      if (rawUrl.startsWith('http')) return rawUrl;
-      return resolveAbsoluteUrl(pageOrigin, rawUrl);
-    })();
-    const finalDownloadUrl = token ? `${normalizedUrl}${nanoid()}?token=${token}&expiry=${Date.now()}` : normalizedUrl;
+    const thumbnailMatch = pageResp.body.match(/thumbnails:\s*\{\s*vtt:\s*['"]([^'"]+)['"]/);
+    const thumbUrl = thumbnailMatch ? resolveAbsoluteUrl(pageUrl, thumbnailMatch[1]) : null;
 
-    if (!finalDownloadUrl.startsWith('http')) throw new Error('Invalid URL');
-
-    const thumbUrl = (() => {
-      if (!thumbnailTrack) return null;
-      const t = thumbnailTrack[1];
-      if (t.startsWith('//')) return `https:${t}`;
-      if (t.startsWith('http')) return t;
-      return resolveAbsoluteUrl(origin, t);
-    })();
+    const pageOrigin = new URL(pageUrl).origin;
 
     return {
       stream: [
         {
           id: 'primary',
           type: 'file',
-          flags: [], // I dont think it will work without headers
+          flags: [flags.CORS_ALLOWED],
           captions: [],
           qualities: {
             unknown: {
               type: 'mp4',
-              url: finalDownloadUrl,
+              url: videoUrl,
             },
           },
           preferredHeaders: {
