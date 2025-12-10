@@ -1,3 +1,4 @@
+import { flags } from '@/entrypoint/utils/targets';
 import { SourcererOutput, makeSourcerer } from '@/providers/base';
 import { MovieScrapeContext } from '@/utils/context';
 import { NotFoundError } from '@/utils/errors';
@@ -97,7 +98,7 @@ async function scrapeMovie(ctx: MovieScrapeContext): Promise<SourcererOutput> {
   });
 
   ctx.progress(80);
-  if (!playerResponse || playerResponse === '404') throw new NotFoundError('Source is inaccessible');
+  if (!playerResponse || playerResponse === '404') throw new NotFoundError('Player 404: Source is inaccessible');
 
   const playlistUrl = isVidmoxy ? extractVidmoxy(playerResponse) : extractAtom(playerResponse);
 
@@ -109,7 +110,7 @@ async function scrapeMovie(ctx: MovieScrapeContext): Promise<SourcererOutput> {
         type: 'hls',
         playlist: createM3U8ProxyUrl(playlistUrl, ctx.features, headers),
         headers,
-        flags: [],
+        flags: [flags.CORS_ALLOWED],
         captions: [],
       },
     ],
@@ -119,8 +120,8 @@ async function scrapeMovie(ctx: MovieScrapeContext): Promise<SourcererOutput> {
 export const fullhdfilmizleScraper = makeSourcerer({
   id: 'fullhdfilmizle',
   name: 'FullHDFilmizle (Turkish)',
-  rank: 2,
+  rank: 3,
   disabled: false,
-  flags: [],
+  flags: [flags.CORS_ALLOWED],
   scrapeMovie,
 });
