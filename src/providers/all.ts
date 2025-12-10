@@ -6,8 +6,10 @@ import { serverMirrorEmbed } from '@/providers/embeds/server-mirrors';
 import { turbovidScraper } from '@/providers/embeds/turbovid';
 import { upcloudScraper } from '@/providers/embeds/upcloud';
 import { autoembedScraper } from '@/providers/sources/autoembed';
+import { dopeboxEmbeds, dopeboxScraper } from '@/providers/sources/dopebox/index';
 import { ee3Scraper } from '@/providers/sources/ee3';
 import { fsharetvScraper } from '@/providers/sources/fsharetv';
+import { fsOnlineEmbeds, fsOnlineScraper } from '@/providers/sources/fsonline/index';
 import { insertunitScraper } from '@/providers/sources/insertunit';
 import { mp4hydraScraper } from '@/providers/sources/mp4hydra';
 import { nepuScraper } from '@/providers/sources/nepu';
@@ -108,6 +110,8 @@ import { zunimeScraper } from './sources/zunime';
 export function gatherAllSources(): Array<Sourcerer> {
   // all sources are gathered here
   return [
+    fsOnlineScraper,
+    dopeboxScraper,
     cuevana3Scraper,
     ridooMoviesScraper,
     hdRezkaScraper,
@@ -157,6 +161,8 @@ export function gatherAllSources(): Array<Sourcerer> {
 export function gatherAllEmbeds(): Array<Embed> {
   // all embeds are gathered here
   return [
+    ...fsOnlineEmbeds,
+    ...dopeboxEmbeds,
     serverMirrorEmbed,
     upcloudScraper,
     vidCloudScraper,
