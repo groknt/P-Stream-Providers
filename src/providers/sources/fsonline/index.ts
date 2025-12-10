@@ -131,7 +131,7 @@ export const fsOnlineEmbeds = [
   makeEmbed({
     id: 'fsonline-doodstream',
     name: 'Doodstream',
-    rank: 2001,
+    rank: 172,
     scrape: scrapeDoodstreamEmbed,
     flags: ['cors-allowed'],
   }),

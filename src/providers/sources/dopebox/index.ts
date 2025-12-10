@@ -90,7 +90,7 @@ export const dopeboxEmbeds = [
   makeEmbed({
     id: 'dopebox-upcloud',
     name: 'UpCloud',
-    rank: 2101,
+    rank: 101,
     flags: ['cors-allowed'],
     scrape: scrapeUpCloudEmbed,
   }),
