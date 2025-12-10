@@ -14,7 +14,7 @@ export function throwOnResponse(response: FetcherResponse) {
 }
 
 export function getMoviePageURL(name: string, season?: number, episode?: number): string {
-  name = name
+  const n = name
     .trim()
     .normalize('NFD')
     .toLowerCase()
@@ -23,11 +23,11 @@ export function getMoviePageURL(name: string, season?: number, episode?: number)
     .split(' ')
     .join('-');
   if (season && episode) {
-    return SHOW_PAGE_URL.replace('{{MOVIE}}', name)
+    return SHOW_PAGE_URL.replace('{{MOVIE}}', n)
       .replace('{{SEASON}}', `${season}`)
       .replace('{{EPISODE}}', `${episode}`);
   }
-  return `${MOVIE_PAGE_URL}${name}/`;
+  return `${MOVIE_PAGE_URL}${n}/`;
 }
 
 export async function fetchENTMDBName(tmdbId: number, mediaType: 'movie' | 'show'): Promise<string> {

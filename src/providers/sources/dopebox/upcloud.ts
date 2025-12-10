@@ -148,7 +148,7 @@ export async function scrapeUpCloudEmbed(ctx: EmbedScrapeContext): Promise<Embed
     },
   });
 
-  if (!response.body.sources || response.body.sources.length == 0) {
+  if (!response.body.sources || response.body.sources.length === 0) {
     console.warn('Server gave no sources', response.body);
     return {
       stream: [],
