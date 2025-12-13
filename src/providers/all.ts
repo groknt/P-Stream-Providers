@@ -68,6 +68,7 @@ import {
   VidsrcsuServer9Scraper,
 } from './embeds/vidsrcsu';
 import { viperScraper } from './embeds/viper';
+import { voeScraper } from './embeds/voe';
 import { warezcdnembedHlsScraper } from './embeds/warezcdn/hls';
 import { warezcdnembedMp4Scraper } from './embeds/warezcdn/mp4';
 import { warezPlayerScraper } from './embeds/warezcdn/warezplayer';
@@ -217,5 +218,6 @@ export function gatherAllEmbeds(): Array<Embed> {
     filelionsScraper,
     droploadScraper,
     supervideoScraper,
+    voeScraper,
   ];
 }
