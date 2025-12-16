@@ -29,7 +29,6 @@ import { cinemaosEmbeds } from './embeds/cinemaos';
 import { closeLoadScraper } from './embeds/closeload';
 import { droploadScraper } from './embeds/dropload';
 import { filelionsScraper } from './embeds/filelions';
-import { madplayBaseEmbed, madplayNsapiEmbed, madplayNsapiVidFastEmbed, madplayRoperEmbed } from './embeds/madplay';
 import { mp4hydraServer1Scraper, mp4hydraServer2Scraper } from './embeds/mp4hydra';
 import { myanimedubScraper } from './embeds/myanimedub';
 import { myanimesubScraper } from './embeds/myanimesub';
@@ -84,7 +83,6 @@ import { embedsuScraper } from './sources/embedsu';
 import { fullhdfilmizleScraper } from './sources/fullhdfilmizle';
 import { hdRezkaScraper } from './sources/hdrezka';
 import { lookmovieScraper } from './sources/lookmovie';
-import { madplayScraper } from './sources/madplay';
 import { movies4fScraper } from './sources/movies4f';
 import { myanimeScraper } from './sources/myanime';
 import { nunflixScraper } from './sources/nunflix';
@@ -132,7 +130,6 @@ export function gatherAllSources(): Array<Sourcerer> {
     animeflvScraper,
     pirxcyScraper,
     vidsrcvipScraper,
-    madplayScraper,
     rgshowsScraper,
     vidifyScraper,
     zunimeScraper,
@@ -198,10 +195,6 @@ export function gatherAllEmbeds(): Array<Embed> {
     // vidsrcNovaEmbed,
     // vidsrcCometEmbed,
     // vidsrcPulsarEmbed,
-    madplayBaseEmbed,
-    madplayNsapiEmbed,
-    madplayRoperEmbed,
-    madplayNsapiVidFastEmbed,
     ...vidifyEmbeds,
     ...zunimeEmbeds,
     ...AnimetsuEmbeds,
