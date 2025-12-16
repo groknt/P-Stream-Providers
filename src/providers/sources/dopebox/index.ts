@@ -1,5 +1,6 @@
 import Fuse from 'fuse.js';
 
+import { flags } from '@/entrypoint/utils/targets';
 import { SourcererEmbed, SourcererOutput, makeEmbed, makeSourcerer } from '@/providers/base';
 import { MovieScrapeContext, ShowScrapeContext } from '@/utils/context';
 import { fetchTMDBName } from '@/utils/tmdb';
@@ -81,7 +82,7 @@ export const dopeboxScraper = makeSourcerer({
   id: 'dopebox',
   name: 'Dopebox',
   rank: 197,
-  flags: ['cors-allowed'],
+  flags: [flags.CORS_ALLOWED],
   scrapeMovie: comboScraper,
   scrapeShow: comboScraper,
 });
@@ -91,7 +92,7 @@ export const dopeboxEmbeds = [
     id: 'dopebox-upcloud',
     name: 'UpCloud',
     rank: 101,
-    flags: ['cors-allowed'],
+    flags: [flags.CORS_ALLOWED],
     scrape: scrapeUpCloudEmbed,
   }),
 ];

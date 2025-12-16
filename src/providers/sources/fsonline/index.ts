@@ -1,6 +1,7 @@
 import * as cheerio from 'cheerio';
 import type { CheerioAPI } from 'cheerio';
 
+import { flags } from '@/entrypoint/utils/targets';
 import { FetcherResponse } from '@/fetchers/types';
 import { SourcererEmbed, SourcererOutput, makeEmbed, makeSourcerer } from '@/providers/base';
 import { MovieScrapeContext, ScrapeContext, ShowScrapeContext } from '@/utils/context';
@@ -121,8 +122,8 @@ async function comboScraper(ctx: ShowScrapeContext | MovieScrapeContext): Promis
 export const fsOnlineScraper = makeSourcerer({
   id: 'fsonline',
   name: 'FSOnline',
-  rank: 189,
-  flags: ['cors-allowed'],
+  rank: 167,
+  flags: [flags.CORS_ALLOWED],
   scrapeMovie: comboScraper,
   scrapeShow: comboScraper,
 });
@@ -133,13 +134,13 @@ export const fsOnlineEmbeds = [
     name: 'Doodstream',
     rank: 172,
     scrape: scrapeDoodstreamEmbed,
-    flags: ['cors-allowed'],
+    flags: [flags.CORS_ALLOWED],
   }),
   // makeEmbed({
   //   id: 'fsonline-filemoon',
   //   name: 'Filemoon',
   //   rank: 2002,
   //   scrape: scrapeFilemoonEmbed,
-  //   flags: ['cors-allowed'],
+  //   flags: [flags.CORS_ALLOWED],
   // }),
 ];

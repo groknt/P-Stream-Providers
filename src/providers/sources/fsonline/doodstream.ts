@@ -1,6 +1,7 @@
 import * as cheerio from 'cheerio';
 import type { CheerioAPI } from 'cheerio';
 
+import { flags } from '@/entrypoint/utils/targets';
 import { FetcherResponse } from '@/fetchers/types';
 import { EmbedScrapeContext, ScrapeContext } from '@/utils/context';
 
@@ -109,7 +110,7 @@ export async function scrapeDoodstreamEmbed(ctx: EmbedScrapeContext): Promise<Em
       {
         type: 'file',
         id: 'primary',
-        flags: ['cors-allowed'],
+        flags: [flags.CORS_ALLOWED],
         captions: [],
         qualities: {
           unknown: {

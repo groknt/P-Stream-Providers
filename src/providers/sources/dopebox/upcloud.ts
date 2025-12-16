@@ -1,8 +1,10 @@
 import * as cheerio from 'cheerio';
 
+import { flags } from '@/entrypoint/utils/targets';
 import { EmbedOutput } from '@/providers/base';
 import { Stream } from '@/providers/streams';
 import { EmbedScrapeContext } from '@/utils/context';
+import { createM3U8ProxyUrl } from '@/utils/proxy';
 
 import {
   BASE_URL,
@@ -155,18 +157,20 @@ export async function scrapeUpCloudEmbed(ctx: EmbedScrapeContext): Promise<Embed
     };
   }
 
+  const streamHeaders = {
+    Referer: 'https://streameeeeee.site/',
+    Origin: 'https://streameeeeee.site',
+  };
+
   return {
     stream: (response.body.sources as any[]).map((source: any, i: number): Stream => {
       return {
         type: 'hls',
         id: `stream-${i}`,
-        flags: ['cors-allowed'],
+        flags: [flags.CORS_ALLOWED],
         captions: [],
-        playlist: source.file,
-        headers: {
-          Referer: 'https://streameeeeee.site/',
-          Origin: 'https://streameeeeee.site',
-        },
+        playlist: createM3U8ProxyUrl(source.file, ctx.features, streamHeaders),
+        headers: streamHeaders,
       };
     }) as Stream[],
   };
