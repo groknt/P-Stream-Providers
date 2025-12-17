@@ -4,6 +4,7 @@ import { program } from 'commander';
 import dotenv from 'dotenv';
 import { prompt } from 'enquirer';
 
+import { runRankManager } from '@/dev-cli/rank';
 import { runScraper } from '@/dev-cli/scraper';
 import { processOptions } from '@/dev-cli/validate';
 
@@ -167,15 +168,31 @@ async function runCommandLine() {
     .option('-t, --type <type>', "Media type. Either 'movie' or 'show'. Only used if source is a provider", 'movie')
     .option('-s, --season <number>', "Season number. Only used if type is 'show'", '0')
     .option('-e, --episode <number>', "Episode number. Only used if type is 'show'", '0')
-    .option('-u, --url <embed URL>', 'URL to a video embed. Only used if source is an embed', '');
+    .option('-u, --url <embed URL>', 'URL to a video embed. Only used if source is an embed', '')
+    .option('--rank', 'Launch the rank management interface', false);
 
   program.parse();
+
+  const opts = program.opts();
+
+  if (opts.rank) {
+    await runRankManager();
+    return;
+  }
 
   const {
     providerOptions,
     source: validatedSource,
     options: validatedOps,
-  } = await processOptions(sources, program.opts());
+  } = await processOptions(sources, {
+    fetcher: opts.fetcher,
+    sourceId: opts.sourceId,
+    tmdbId: opts.tmdbId,
+    type: opts.type,
+    season: opts.season,
+    episode: opts.episode,
+    url: opts.url,
+  });
   await runScraper(providerOptions, validatedSource, validatedOps);
 }
 
