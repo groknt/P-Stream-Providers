@@ -67,7 +67,7 @@ async function comboScraper(ctx: ShowScrapeContext | MovieScrapeContext): Promis
 export const primesrcScraper = makeSourcerer({
   id: 'primesrc',
   name: 'PrimeSrc',
-  rank: 105,
+  rank: 168,
   flags: [],
   scrapeMovie: comboScraper,
   scrapeShow: comboScraper,

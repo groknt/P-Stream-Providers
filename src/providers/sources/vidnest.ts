@@ -31,7 +31,7 @@ async function scrape(ctx: MovieScrapeContext | ShowScrapeContext, type: 'movie'
 const vidnestScraper = makeSourcerer({
   id: 'vidnest',
   name: 'Vidnest',
-  rank: 130,
+  rank: 196,
   disabled: false,
   flags: [flags.CORS_ALLOWED],
   scrapeMovie: (ctx: MovieScrapeContext) => scrape(ctx, 'movie'),
