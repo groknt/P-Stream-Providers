@@ -2,9 +2,9 @@ import { flags } from '@/entrypoint/utils/targets';
 import { makeSourcerer } from '@/providers/base';
 import { MovieScrapeContext, ShowScrapeContext } from '@/utils/context';
 
-const backendUrl = 'https://backend.vidnest.fun';
+const backendUrl = 'https://second.vidnest.fun';
 
-const servers = ['hollymoviehd', 'allmovies', 'flixhq', 'official'];
+const servers = ['hollymoviehd', 'allmovies'];
 
 async function scrape(ctx: MovieScrapeContext | ShowScrapeContext, type: 'movie' | 'tv') {
   const embeds = [];
@@ -32,7 +32,7 @@ const vidnestScraper = makeSourcerer({
   id: 'vidnest',
   name: 'Vidnest',
   rank: 130,
-  disabled: true,
+  disabled: false,
   flags: [flags.CORS_ALLOWED],
   scrapeMovie: (ctx: MovieScrapeContext) => scrape(ctx, 'movie'),
   scrapeShow: (ctx: ShowScrapeContext) => scrape(ctx, 'tv'),
