@@ -80,6 +80,7 @@ export function labelToLanguageCode(label: string): string | null {
     Italian: 'it',
     Norwegian: 'no',
     Persian: 'fa',
+    'farsi/persian': 'fa',
     Polish: 'pl',
     Portuguese: 'pt',
     'Protuguese (BR)': 'pt-br',
