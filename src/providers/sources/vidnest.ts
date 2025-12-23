@@ -1,4 +1,3 @@
-import { flags } from '@/entrypoint/utils/targets';
 import { makeSourcerer } from '@/providers/base';
 import { MovieScrapeContext, ShowScrapeContext } from '@/utils/context';
 
@@ -31,9 +30,9 @@ async function scrape(ctx: MovieScrapeContext | ShowScrapeContext, type: 'movie'
 const vidnestScraper = makeSourcerer({
   id: 'vidnest',
   name: 'Vidnest',
-  rank: 196,
+  rank: 115,
   disabled: false,
-  flags: [flags.CORS_ALLOWED],
+  flags: [],
   scrapeMovie: (ctx: MovieScrapeContext) => scrape(ctx, 'movie'),
   scrapeShow: (ctx: ShowScrapeContext) => scrape(ctx, 'tv'),
 });
