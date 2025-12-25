@@ -3,6 +3,7 @@
 import { program } from 'commander';
 import dotenv from 'dotenv';
 import { prompt } from 'enquirer';
+import { ProxyAgent, setGlobalDispatcher } from 'undici';
 
 import { runRankManager } from '@/dev-cli/rank';
 import { runScraper } from '@/dev-cli/scraper';
@@ -194,6 +195,14 @@ async function runCommandLine() {
     url: opts.url,
   });
   await runScraper(providerOptions, validatedSource, validatedOps);
+}
+
+// this takes care of native fetch
+// node-fetch needs to be handled separately
+if (process.env.HTTPS_PROXY) {
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+  console.warn(`Using HTTPS proxy at ${process.env.HTTPS_PROXY}`);
+  setGlobalDispatcher(new ProxyAgent({ uri: new URL(process.env.HTTPS_PROXY).toString() }));
 }
 
 if (process.argv.length === 2) {
