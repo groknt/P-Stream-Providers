@@ -108,6 +108,9 @@ importers:
       eslint-plugin-prettier:
         specifier: ^5.5.4
         version: 5.5.4(@types/eslint@9.6.1)(eslint-config-prettier@9.1.2(eslint@8.57.1))(eslint@8.57.1)(prettier@3.6.2)
+      https-proxy-agent:
+        specifier: ^7.0.6
+        version: 7.0.6
       prettier:
         specifier: ^3.6.2
         version: 3.6.2
@@ -132,6 +135,9 @@ importers:
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
+      undici:
+        specifier: ^7.16.0
+        version: 7.16.0
       vite:
         specifier: ^5.4.21
         version: 5.4.21(@types/node@24.9.1)(terser@5.44.0)
@@ -2954,6 +2960,10 @@ packages:
 
   undici-types@7.16.0:
     resolution: {integrity: sha512-Zz+aZWSj8LE6zoxD+xrjh4VfkIG8Ya6LvYkZqtUQGJPZjYl53ypCaUwWqo7eI0x66KBGeRo+mlBEkMSeSZ38Nw==}
+
+  undici@7.16.0:
+    resolution: {integrity: sha512-QEg3HPMll0o3t2ourKwOeUAZ159Kn9mx5pnzHRQO8+Wixmh88YdZRiIwat0iNzNNXn0yoEtXJqFpyW7eM8BV7g==}
+    engines: {node: '>=20.18.1'}
 
   universalify@0.1.2:
     resolution: {integrity: sha512-rBJeI5CXAlmy1pV+617WB9J63U6XcazHHF2f2dbJix4XzpUF0RS3Zbj0FGIOCAva5P/d/GBOYaACQ1w+0azUkg==}
@@ -6312,6 +6322,8 @@ snapshots:
       through: 2.3.8
 
   undici-types@7.16.0: {}
+
+  undici@7.16.0: {}
 
   universalify@0.1.2: {}
 
