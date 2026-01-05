@@ -141,11 +141,11 @@ ${baseUrl}/
     throw new NotFoundError('Failed to extract tokens');
   }
 
-  const [token1, token2, token3] = tokenMatch || [];
+  const [, token1, token2, token3] = tokenMatch || [];
 
   // URL object
   const streamBaseUrl = 'https://cdn.neuronix.sbs';
-  const url = new URL(`${streamBaseUrl}/${videoId}/`);
+  const url = new URL(`${streamBaseUrl}/segment/${videoId}/`);
 
   // Append parameters conditionally
   if (token1) url.searchParams.append('token1', token1);
