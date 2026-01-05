@@ -45,28 +45,30 @@ async function comboScraper(ctx: ShowScrapeContext | MovieScrapeContext): Promis
     filmMatch = filmCardRegex.exec(searchPage);
     if (filmMatch === null) break;
 
-    const link = filmMatch[1];
+    let link = filmMatch[1];
     const title = filmMatch[2];
     const normalizedTitle = title.toLowerCase().replace(/[^a-z0-9]/g, '');
 
     // Check if the current result is valid for our query
     if (normalizedTitle.includes(normalizedSearchTitle)) {
-      let candidateUrl: string | null = null;
-
       if (ctx.media.type === 'show') {
-        const episode = ctx.media.episode.number;
-        const episodeUrl = `${baseUrl}${link}/episode-${episode}`;
+        link = link.replace(/\/episode-\d+(\/)?$/, '');
+        const seasonRegex = new RegExp(`season\\s*${ctx.media.season.number}\\b`, 'i');
 
-        // Check if this is a TV series by looking for season indicators or standard film format
-        if (title.toLowerCase().includes('season') || link.includes('/film/')) {
-          candidateUrl = episodeUrl;
+        if (seasonRegex.test(title)) {
+          // Exact Match
+          exactMatchUrl = `${baseUrl}${link}/episode-${ctx.media.episode.number}`;
+          break;
+        }
+
+        // Loose Match
+        if (!looseMatchUrl && normalizedTitle === normalizedSearchTitle) {
+          looseMatchUrl = `${baseUrl}${link}/episode-${ctx.media.episode.number}`;
         }
       } else {
-        // For movies
-        candidateUrl = `${baseUrl}${link}`;
-      }
+        // Movies
+        const candidateUrl = `${baseUrl}${link}`;
 
-      if (candidateUrl) {
         // Exact Match
         if (normalizedTitle === normalizedSearchTitle) {
           exactMatchUrl = candidateUrl;
