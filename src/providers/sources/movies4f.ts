@@ -6,11 +6,6 @@ import { MovieScrapeContext, ShowScrapeContext } from '@/utils/context';
 import { NotFoundError } from '@/utils/errors';
 
 const baseUrl = 'https://movies4f.com';
-const headers = {
-  Referer: 'https://movies4f.com/',
-  Origin: 'https://movies4f.com',
-  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0',
-};
 
 async function comboScraper(ctx: ShowScrapeContext | MovieScrapeContext): Promise<SourcererOutput> {
   // Build search query - try without year first, then with year if no results
@@ -164,7 +159,11 @@ ${baseUrl}/
         id: 'primary',
         type: 'hls',
         playlist: streamUrl,
-        headers,
+        headers: {
+          Referer: 'https://cdn.neuronix.sbs',
+          Origin: 'cdn.neuronix.sbs',
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0',
+        },
         flags: [flags.CORS_ALLOWED],
         captions: [],
       },
