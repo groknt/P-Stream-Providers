@@ -99,6 +99,7 @@ import { zunimeScraper } from './sources/zunime';
 export function gatherAllSources(): Array<Sourcerer> {
   // all sources are gathered here
   return [
+    movies4fScraper,
     fsOnlineScraper,
     dopeboxScraper,
     cuevana3Scraper,
@@ -134,7 +135,6 @@ export function gatherAllSources(): Array<Sourcerer> {
     turbovidSourceScraper,
     pelisplushdScraper,
     primewireScraper,
-    movies4fScraper,
     debridScraper,
     cinehdplusScraper,
     fullhdfilmizleScraper,

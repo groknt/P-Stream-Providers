@@ -9,8 +9,7 @@ const baseUrl = 'https://movies4f.com';
 const headers = {
   Referer: 'https://movies4f.com/',
   Origin: 'https://movies4f.com',
-  'User-Agent':
-    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0',
 };
 
 async function comboScraper(ctx: ShowScrapeContext | MovieScrapeContext): Promise<SourcererOutput> {
@@ -20,8 +19,7 @@ async function comboScraper(ctx: ShowScrapeContext | MovieScrapeContext): Promis
 
   let searchPage = await ctx.proxiedFetcher<string>(searchUrl, {
     headers: {
-      'User-Agent':
-        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0',
     },
   });
 
@@ -31,8 +29,7 @@ async function comboScraper(ctx: ShowScrapeContext | MovieScrapeContext): Promis
     searchUrl = `${baseUrl}/search?q=${searchQuery}`;
     searchPage = await ctx.proxiedFetcher<string>(searchUrl, {
       headers: {
-        'User-Agent':
-          'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0',
       },
     });
   }
@@ -85,8 +82,7 @@ async function comboScraper(ctx: ShowScrapeContext | MovieScrapeContext): Promis
   // Load the film page
   const filmPage = await ctx.proxiedFetcher<string>(filmUrl, {
     headers: {
-      'User-Agent':
-        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0',
     },
   });
 
@@ -115,8 +111,7 @@ async function comboScraper(ctx: ShowScrapeContext | MovieScrapeContext): Promis
     method: 'POST',
     headers: {
       'Content-Type': 'multipart/form-data; boundary=----geckoformboundaryc5f480bcac13a77346dab33881da6bfb',
-      'User-Agent':
-        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0',
       Referer: iframeSrc,
     },
     body: `------geckoformboundaryc5f480bcac13a77346dab33881da6bfb
@@ -146,42 +141,19 @@ ${baseUrl}/
     throw new NotFoundError('Failed to extract tokens');
   }
 
-  const [, token1, token2, token3] = tokenMatch;
+  const [token1, token2, token3] = tokenMatch || [];
 
-  // Get streaming page with tokens
-  const streamingUrl = `https://cdn4.zenty.store/streaming?id=${videoId}&web=movies4f.com&token1=${token1}&token2=${token2}&token3=${token3}&cdn=https%3A%2F%2Fcdn4.zenty.store&lang=en`;
+  // URL object
+  const streamBaseUrl = 'https://cdn.neuronix.sbs';
+  const url = new URL(`${streamBaseUrl}/${videoId}/`);
 
-  const streamingPage = await ctx.proxiedFetcher<string>(streamingUrl, {
-    headers: {
-      'User-Agent':
-        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-      Referer: 'https://moviking.childish2x2.fun/',
-    },
-  });
+  // Append parameters conditionally
+  if (token1) url.searchParams.append('token1', token1);
+  if (token2) url.searchParams.append('token2', token2);
+  if (token3) url.searchParams.append('token3', token3);
 
-  ctx.progress(90);
-
-  // Extract M3U8 URL from streaming page using regex
-  // The URL is constructed as: url = 'https://cdn.neuronix.sbs/segment/' + videoId + '/?token1=' + token1 + '&token3=' + token3
-  const urlRegex = /url = '([^']+)'/;
-  const urlMatch = streamingPage.match(urlRegex);
-
-  if (!urlMatch) {
-    throw new NotFoundError('Failed to extract stream URL from streaming page');
-  }
-
-  const streamBaseUrl = urlMatch[1];
-
-  // Extract videoId from the streaming URL parameters
-  const videoIdMatch = streamingUrl.match(/id=([^&]+)/);
-  if (!videoIdMatch) {
-    throw new NotFoundError('Failed to extract videoId from streaming URL');
-  }
-
-  const streamVideoId = videoIdMatch[1];
-
-  // Construct the full stream URL
-  const streamUrl = `${streamBaseUrl}${streamVideoId}/?token1=${token1}&token3=${token3}`;
+  // Create stream URL string
+  const streamUrl = url.toString();
 
   ctx.progress(95);
 
@@ -203,7 +175,7 @@ ${baseUrl}/
 export const movies4fScraper = makeSourcerer({
   id: 'movies4f',
   name: 'M4F',
-  rank: 166,
+  rank: 300,
   disabled: false,
   flags: [],
   scrapeMovie: comboScraper,
