@@ -184,7 +184,7 @@ ${baseUrl}/
 export const movies4fScraper = makeSourcerer({
   id: 'movies4f',
   name: 'M4F',
-  rank: 300,
+  rank: 291,
   disabled: false,
   flags: [],
   scrapeMovie: comboScraper,
